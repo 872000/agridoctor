@@ -17,6 +17,16 @@ def load_treatments(path=TREATMENTS_PATH):
 
 
 def get_treatment(label, path=TREATMENTS_PATH):
-    """Return the treatment entry for a disease label (KeyError if unknown)."""
+    """Return the treatment entry for a disease label.
+
+    Raises:
+        KeyError: if ``label`` is unknown, naming the valid labels.
+    """
     data = load_treatments(path)
-    return data[label]
+    try:
+        return data[label]
+    except KeyError:
+        valid = ", ".join(sorted(data))
+        raise KeyError(
+            f"unknown disease label {label!r}; valid labels: {valid}"
+        ) from None

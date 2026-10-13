@@ -204,6 +204,15 @@ def test_treatment_json_is_valid_json():
         json.load(f)
 
 
+def test_treatment_unknown_label_error_lists_valid_labels():
+    with pytest.raises(KeyError) as excinfo:
+        get_treatment("rust_typo")
+    message = str(excinfo.value)
+    assert "rust_typo" in message
+    for cls in CLASSES:
+        assert cls in message
+
+
 # ---------- annotate + CLI ----------
 
 def test_annotate_draws_boxes():
