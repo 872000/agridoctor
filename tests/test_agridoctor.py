@@ -245,3 +245,17 @@ def test_cli_diagnose_end_to_end(tmp_path, trained_classifier, sample_images):
     assert result["label"] in CLASSES
     assert 0.0 <= result["confidence"] <= 1.0
     assert result["treatment"]["organic"]
+
+
+def test_diagnose_image_missing_file_raises_clear_error(tmp_path):
+    from agridoctor import cli
+    with pytest.raises(FileNotFoundError, match="no such image file"):
+        cli.diagnose_image(str(tmp_path / "does_not_exist.png"))
+
+
+def test_diagnose_image_undecodable_file_raises_clear_error(tmp_path):
+    from agridoctor import cli
+    bad = tmp_path / "leaf.png"
+    bad.write_bytes(b"this is not image data")
+    with pytest.raises(ValueError, match="could not decode image"):
+        cli.diagnose_image(str(bad))

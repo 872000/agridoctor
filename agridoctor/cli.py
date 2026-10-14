@@ -25,12 +25,18 @@ def ensure_model():
 
 
 def diagnose_image(path):
-    """Diagnose a single image. Returns dict with label, confidence, treatment."""
+    """Diagnose a single image. Returns dict with label, confidence, treatment.
+
+    Raises FileNotFoundError if the path does not point to a readable file,
+    ValueError if the file exists but cannot be decoded as an image.
+    """
+    if not Path(path).is_file():
+        raise FileNotFoundError(f"no such image file: {path} — check the path and try again")
     clf, _ = ensure_model()
     classes = list(clf.classes_)  # model-native order (LabelEncoder sorts labels)
     img = cv2.imread(str(path))
     if img is None:
-        raise FileNotFoundError(f"could not read image: {path}")
+        raise ValueError(f"could not decode image: {path} — is it a png/jpg file?")
     from .features import extract_features
     X = extract_features(img).reshape(1, -1)
     proba = clf.predict_proba(X)[0]
