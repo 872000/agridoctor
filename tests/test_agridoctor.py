@@ -259,3 +259,11 @@ def test_diagnose_image_undecodable_file_raises_clear_error(tmp_path):
     bad.write_bytes(b"this is not image data")
     with pytest.raises(ValueError, match="could not decode image"):
         cli.diagnose_image(str(bad))
+
+
+def test_cli_batch_missing_dir_exits_with_clear_error(tmp_path, capsys):
+    from agridoctor import cli
+    with pytest.raises(SystemExit) as excinfo:
+        cli.main(["batch", str(tmp_path / "no_such_dir")])
+    assert excinfo.value.code == 1
+    assert "No such directory" in capsys.readouterr().err

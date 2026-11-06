@@ -80,6 +80,9 @@ def cmd_batch(args):
     clf, _ = ensure_model()
     classes = list(clf.classes_)
     src = Path(args.dir)
+    if not src.is_dir():
+        print(f"No such directory: {src} — check the path and try again", file=sys.stderr)
+        sys.exit(1)
     images = sorted(p for p in src.iterdir()
                     if p.suffix.lower() in {".png", ".jpg", ".jpeg"})
     if not images:
